@@ -1,0 +1,11 @@
+/**
+{ "syntaxok" : true,
+  "returns": 7
+}
+**/
+func main() -> int {
+    if( +4.0 == 4.0 ){
+        return 7;
+    }
+    return 4;
+}
