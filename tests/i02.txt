@@ -1,0 +1,13 @@
+/**
+    {
+        "returns": 11
+    }
+**/
+
+func main() -> int {
+    if( not 44 ) {
+        return 10;
+    } else {
+        return 11;
+    }
+}

@@ -1,0 +1,8 @@
+/**
+{ "syntaxok" : false,
+   "returns" : null
+}
+**/
+func main() -> int {
+    return int( 8 < 3.25 );
+}

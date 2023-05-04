@@ -1,0 +1,7 @@
+/**
+    { "returns" : 1 }
+**/
+
+func main() -> int {
+    return 10 > 5;
+}

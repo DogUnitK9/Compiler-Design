@@ -1,0 +1,12 @@
+/**
+{ "syntaxok" : true,
+   "returns" : 10
+}
+**/
+func main() -> int {
+    if( int(-2.5) == -3 ){
+        return 5;
+    } else {
+        return 10;
+    }
+}

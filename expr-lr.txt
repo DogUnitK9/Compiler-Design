@@ -1,0 +1,38 @@
+expr :: commaexpr
+commaexpr :: commaexpr COMMA assignexpr
+commaexpr :: assignexpr
+assignexpr :: assignexpr EQ logicalexpr
+assignexpr :: logicalexpr
+logicalexpr :: logicalexpr LOGICOP relexpr
+logicalexpr :: relexpr
+relexpr :: relexpr RELOP shiftexpr
+relexpr :: shiftexpr
+shiftexpr :: shiftexpr SHIFTOP bitexpr
+shiftexpr :: bitexpr
+bitexpr :: bitexpr BITOP addexpr
+bitexpr :: addexpr
+addexpr :: addexpr ADDOP mulexpr
+addexpr :: mulexpr
+mulexpr :: mulexpr MULOP powexpr
+mulexpr :: powexpr
+powexpr :: unaryexpr POWOP powexpr
+powexpr :: unaryexpr
+unaryexpr :: BITNOT unaryexpr
+unaryexpr :: ADDOP unaryexpr
+unaryexpr :: NOTOP unaryexpr
+unaryexpr :: ppexpr
+ppexpr :: itemselection PLUSPLUS
+ppexpr :: itemselection
+itemselection :: itemselection DOT ID LP calllist RP
+itemselection :: itemselection DOT ID
+itemselection :: itemselection LB expr RB
+itemselection :: atom
+atom :: ID LP calllist RP
+atom :: ID
+atom :: cast
+atom :: LP expr RP
+atom :: constant
+constant ::  INUM
+constant :: FNUM
+constant :: STRINGCONST
+cast :: TYPE LP expr RP

@@ -1,0 +1,9 @@
+/**
+    {
+        "returns": 1
+    }
+**/
+
+func main() -> int {
+    return 4 or 5/0;
+}

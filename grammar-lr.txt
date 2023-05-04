@@ -1,0 +1,149 @@
+ADDOP :: [-+]
+ARROW :: ->
+BITNOT :: ~
+BITOP :: [&|^]
+CASE :: \bcase\b
+CLASS :: \bclass\b
+COLON :: :
+COMMA :: ,
+COMMENT :: /\*(.|\n)*?\*/|//[^\n]*
+DO :: \bdo\b
+DOT :: \.
+EQ :: =
+ELSE :: \belse\b
+EXCEPT :: \bexcept\b
+# 1E2 1. 1.2  1.2E3  1E2 .2  .2E1  1E-3  1.0E-4
+FNUM :: \d+[Ee][-+]?\d+|\d+\.\d*([Ee][-+]?\d+)?|\.\d+([Ee][-+]?\d+)?
+FOR :: \bfor\b
+FUNC :: \bfunc\b
+IF :: \bif\b
+INOUT :: \binout\b
+IN :: \bin\b
+INUM :: \d+
+OUT :: \bout\b
+LB :: \[
+LBR :: \{
+LOGICOP :: \b(and|or)\b
+LP :: \(
+MULOP :: [*/%]
+NOTOP :: \bnot\b
+PLUSPLUS :: [+]{2}|-{2}
+POWOP :: [*]{2}
+RAISE :: \braise\b
+RB :: \]
+RBR :: \}
+RELOP :: >=|<=|!=|==|>|<
+REPEAT :: \brepeat\b
+RETURN :: \breturn\b
+RP :: \)
+SEMI :: ;
+SHIFTOP :: <<|>>>|>>
+STRINGCONST :: "(\\"|[^"])*"|'(\\'|[^']*)'
+SWITCH :: \bswitch\b
+TRY :: \btry\b
+TYPE :: \b(int|float|string|vec2|vec3|vec4)\b
+UNTIL :: \buntil\b
+VAR :: \bvar\b
+WHILE :: \bwhile\b
+ID :: [A-Za-z_]\w*
+
+S :: program
+
+#program is sequence of declarations
+program :: decls
+decls :: decl decls | decl
+
+#declaration = variable declaration or function declaration
+decl :: vardecl | funcdecl | classdecl
+
+# var x : int
+# var x : int[2]
+# var x : int[2][4]
+vardecl ::  VAR ID COLON type optionalarray SEMI
+optionalarray :: LB optionalsize RB optionalarray | lambda
+optionalsize :: INUM | lambda
+
+# ID is used for user-defined types (classes)
+type :: TYPE | ID
+
+# user defined classes
+classdecl :: CLASS ID LBR memberlist RBR
+memberlist :: vardecl memberlist | lambda
+
+# func foo( ...params... ) -> int { ... }
+# if function is void, the -> clause is omitted
+funcdecl :: FUNC ID LP optionalparamlist RP optionalreturn braceblock
+
+braceblock :: LBR vardecls stmts RBR
+
+vardecls :: vardecl vardecls | lambda
+
+#parameter list for function; can be empty
+optionalparamlist :: lambda | paramlist
+paramlist :: param | param COMMA paramlist
+
+#one parameter for function declaration
+#   inout int x
+#   out int y
+#   in int z
+param :: optionalinout ID COLON type optionalarray
+optionalinout :: lambda | IN | OUT | INOUT
+
+optionalreturn :: lambda | ARROW type optionalarray
+
+# sequence of statements
+stmts :: stmt stmts | lambda
+
+stmt :: cond | loop | switch | expr SEMI | return SEMI | try | raise SEMI
+
+cond :: IF LP expr RP braceblock | IF LP expr RP braceblock ELSE braceblock
+
+loop :: WHILE LP expr RP braceblock
+      | DO braceblock WHILE LP expr RP SEMI
+      | REPEAT braceblock UNTIL LP expr RP SEMI
+      | FOR LP expr SEMI expr SEMI expr RP braceblock
+
+switch :: SWITCH LP expr RP LBR cases RBR
+
+#case must have integer values
+#last case must be the default one (no label)
+cases :: CASE INUM COLON braceblock cases | CASE COLON braceblock
+
+expr :: commaexpr
+commaexpr :: commaexpr COMMA assignexpr | assignexpr
+assignexpr :: assignexpr EQ logicalexpr | logicalexpr
+logicalexpr :: logicalexpr LOGICOP relexpr | relexpr
+relexpr :: relexpr RELOP shiftexpr | shiftexpr
+shiftexpr :: shiftexpr SHIFTOP bitexpr | bitexpr
+bitexpr :: bitexpr BITOP addexpr | addexpr
+addexpr :: addexpr ADDOP mulexpr | mulexpr
+mulexpr :: mulexpr MULOP powexpr | powexpr
+powexpr :: unaryexpr POWOP powexpr | unaryexpr
+unaryexpr :: BITNOT unaryexpr | ADDOP unaryexpr | NOTOP unaryexpr | ppexpr
+ppexpr :: itemselection PLUSPLUS | itemselection
+itemselection ::    itemselection DOT ID LP calllist RP
+                  | itemselection DOT ID
+                  | itemselection LB expr RB
+                  | atom
+
+atom ::   ID LP calllist RP
+        | ID
+        | cast
+        | LP expr RP
+        | constant
+
+constant ::  INUM  | FNUM | STRINGCONST
+cast :: TYPE LP expr RP
+
+calllist :: lambda
+          | expr
+
+return :: RETURN | RETURN expr
+
+try :: TRY braceblock exceptlist
+exceptlist :: EXCEPT LP ID COLON type RP braceblock exceptlist
+            | EXCEPT LP ID COLON type RP braceblock
+            | EXCEPT braceblock
+
+#can only raise a variable
+raise :: RAISE ID

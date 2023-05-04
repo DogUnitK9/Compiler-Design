@@ -1,0 +1,9 @@
+/**
+    {
+        "returns": 0
+    }
+**/
+
+func main() -> int {
+    return not 42;
+}

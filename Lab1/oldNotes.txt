@@ -1,0 +1,425 @@
+string I = "....";
+int idx = 0;
+while( idx < I.Length){
+    char c = I[idx];
+    if( c == ' ' || c == '\n'){
+        ++idx;
+        continue;
+    }
+    if( c >= '0' && c <= '9'){
+        string l = '';
+        while(idx < I.Length && I[idx] >= '0' || I[idx] <= '9'){
+            l += I[idx++];
+        }
+        Token T = new Token("NUM", l, ?);
+        T.add(t);
+        continue;
+    }
+    if( c >= 'a' && c <= 'z'){
+    }
+}
+
+class Production{
+    public string lhs;
+    public List<string> rhs;
+}
+
+prec = {          //precedence
+'++' : 100;
+'NEGATE' : 90;
+'BITNOT' : 90;
+'POWOP' : 80;
+'MULLOP' : 70;
+'ADDOP' : 60;
+'LP' : -1000;
+...
+}
+
+assoc = {
+'ADDOP' = 'L'
+'MULLOP' = 'L'
+'POWOP' = 'R'
+...
+}
+
+opstack is a stack of tree nodes
+
+while op stack not empty:
+    apply_op();
+
+def maybeNegate(t):
+    if prev is an operator or
+    prev is LP or
+    prev is NULL:
+        t.sym = "NEGATE"
+
+def apply_op()
+{
+    loop:
+        Get next token. Call it t
+        if prev == "ID" and t.sym == "LP":
+            opStack.push(new TreeNode("Func", NULL));
+            opStack.push(new TreeNode("LP", t));
+            prev = t.sym;
+            continue;
+        maybeNegate(t);
+        if T is NUM or ID:
+            Stack it to termstack
+        elif t is $:
+            break
+        elif t is LP:
+            opstack.push(t)
+        elif t is RP:
+            if opStack is empty: 
+                error
+            while(opstack.top().sym != LP)
+                applyOperator();
+                if opStack is empty:
+                    error
+            opstack.pop();    //discard LP
+        else:
+            is operator
+        while 1:
+            if opstack is not empty: 
+                sa = assoc[opStack.top().sym]   //Stack Top Associativity
+                tp = prec[t.sym]                //Token Precedence
+                sp = prec[opStack.top()]        //Stack Top Precedence
+                if 'L':
+                    if tp <= sp:
+                        applyOperator();
+                    else:
+                        break;
+                elif 'R':
+                    if tp < sp:
+                        applyOperator();
+                    else:
+                        break;
+                else:
+                    error;
+            else:
+                break;
+        
+        push t to opstack
+    if opstack is empty:
+        error
+    op = opStack.pop()
+    if op is unary:
+        if termStack is empty:
+            error
+        n1 = termStack.pop()
+        op.children.add(n1)
+    else:
+        if termStack is empty: 
+            error
+        n2 = termStack.pop();
+        if termStack is empty: 
+            error
+        n1 = termStack.pop();
+        op.Children.add(n1);
+        op.Children.add(n2);
+    termStack.push(op);
+    return;
+}
+
+t = Tokenizer.next();
+Tree Node n = new TreeNode(t.sym, t);
+opStack.push(n);
+
+NUM :: \d+
+ID :: [a-z]+
+IF :: if
+LP :: [(]
+RP :: [)]
+ADDOP :: [+-]
+MULOP :: [*/]
+POWOP :: [**]
+RELOP :: [><>=<=]
+BOOLOP :: [andor]
+SHIFTOP :: [&&||>><<>>>]
+UNARYOP :: [~!]
+WHITESPACE :: \s+
+COMMENT :: //[^\n]*
+$ -> EOF
+$$ -> EOS
+
+
+boolexp :: boolexp BOOLOP relexp | relexp
+relexp :: sum RELOP sum | sum
+shiftexp :: shiftexp SHIFTOP sum | sum
+sum :: prod | sum ADDOP prod
+prod :: pow | prod MULOP pow
+factor :: LP boolexp RP | NUM | ID
+pow :: unary | unary POWOP pow
+unary :: factor | UNARYOP unary | factor ++
+
+bool notNullable(set<string> nullable, List<string> p)
+{
+    foreach(var sym in p)
+    {
+        if(!nullable.Contains(sym))
+            return true;
+    }
+    return false
+}
+
+def computeNullable(N):
+    nullable = set()
+    keepLooping = True
+    while keepLooping:
+        keepLooping = False
+        for n in N:
+            if n in nullable:
+                continue
+            for p in N[n]:
+                if(!notNullable(nullable, p)):
+                    nullable.add(n)
+                    keepLooping = True
+                    break
+
+def computeFirst(T, N, nullable):
+    first = {}    #key = string(term or nonterm), value = set of strings
+    for t in T:
+        first[t] = set([t])
+    for n in N:
+        first[n] = set()
+    keepLooping = True
+    while keepLooping:
+        keepLooping = False
+        for n in N:
+            for p in N[n]:
+                for sym in p.rhs:
+                    le,1 = len(first[n])
+                    first[n] = first[n].union(first[sym])
+                    if len(first[n])!= len 1:
+                        keepLooping = True
+                    if sym not in nullable:
+                        break
+
+def computeFollow(T, N, nullable, first):
+    follow = {}    #key = string(nonterm), value = set of strings
+    for n in N:
+        first[n] = set()
+    follow['S'].add("$")
+    keepLooping = True
+    while keepLooping:
+        keepLooping = False
+        for n in N:
+            for p in N[n]:
+                for i in range(len(p.rhs)):
+                    sym = p.rhs[i]
+                    if sym in T:
+                        continue
+                    for j in range(i+1, len(p))
+                        sym2 = p.rhs[j]
+                        follow[sym] = follow[sym].union(first[sym2])
+                        if not sym2 in nullable:
+                            break
+                    else:
+                        follow[sym] = follow[sym].union(follow[n])
+
+
+
+def isTerminal(sym):
+    if sym == "S":
+        return False
+    else:
+        return sym.upper() == sym
+
+def makeClass(lhs, rhs, inherit)
+    print(f"public class {lhs}Node{inherit}{{",file = ofp}})
+    for sym in rhs:
+        i = sym.find("<")
+        if i == -1:
+            continue
+        label = sym[i+1:-1]
+        sym = sym[:i]
+        if len(label) == 0:
+            label = sym
+        if isTerminal(sym)
+            print(f"public Token {label};",file = ofp)
+        else:
+            print(f"public {sym}Node {label};", file = ofp)
+    print("}", file = ofp)
+
+ofp = open("classes.cs", 'w')
+with open("grammar.txt") as fp
+    lines = fp.read()
+lines = lines.replace("\n "," ")
+lines = lines.split("\n")
+for line in lines:
+    line = line.strip()
+    if line.startswith("#"):
+        continue
+    if len(line) == 0:
+        continue
+    idx = line.find("::")
+    assert idx != -1
+    lhs = line[:idx].strip()
+    rhs = line[idx + 2:].strip().split("|")
+    if len(rhs) == 1:
+        makeClass(lhs, rhs[0].split())
+    else:
+        print(f"class {lhsNode {{}}}", file = ofp)
+        for i, p in enumerate(rhs):
+            p = p.split()
+            makeClass(f"{lhs}{i+1}", p,f":{lhsNode}")
+ofp.close()
+
+NFA for:
+expr :: expr ADDOP term | term
+term :: term MULOP factor | term
+factor :: ID | LP expr RP
+
+1: S' :: . expr
+2: S' :: expr .
+3: expr :: . expr ADDOP term
+4: expr :: expr . ADDOP term
+5: expr :: expr ADDOP . term
+6: expr :: expr ADDOP term .
+7: expr :: . term
+8: expr :: term .
+9: term :: . term MULOP factor
+10: term :: term . MULOP factor
+11: term :: term MULOP . factor
+12: term :: term MULOP factor .
+13: term :: . factor
+14: term :: factor .
+15: term :: . ID
+16: term :: ID .
+17: factor :: . LP expr RP
+18: factor :: LP . expr RP
+19: factor :: LP expr . RP
+20: factor :: LP expr RP .
+
+// StateMap: LR0Item -> NFAState nfa:List<NFAState> allItems:List<LR0Item>
+public class NFAState
+{
+    public LR0Item item;
+    public int index;
+    public Dictionary<string, List<NFAState> > transitions = new Dictionary<string,List<NFAState>>();
+    foreach (NFAState q in info)
+    {
+        var sym = q.items.rhs[q.item.dpos];
+        LR0Item I = new LR0Item(q.item.production, q.item.dpos + 1);
+        q.addTransition(sym, stateMap[I])
+        if(nonterminals.ContainsKey(sym))
+        {
+            foreach(Production p in nonterminals[sym])
+            {
+                I = new LR0Item(p, 0);
+                q.addTransition("", StateMap[I]);
+            }
+        }
+    }
+}
+
+class NFAState{
+    ... item
+    public Dictionary<String, List<NFAState>> transitions = new Dictionary<string,List<NFAState>>();;
+    public void computeClosure()
+    {   
+        computeClosure(this, this.closure)    
+    }
+    private void computeClosure(NFAState q, HashSet<NFAState> closure)
+    {
+        closure.add(q);
+        if(q.transitions.ContainsKey(""))
+            for(var q2 in q.transitions[""])
+            {
+                if(!closure.Contains(q2))
+                    computeClosure(q2, closure)
+            }
+    }
+}
+
+var dfa = new List<DFAState>();
+class DFAState{
+    public int index;
+    public HashSet<NFAState> label;
+    public Dictionary<String, DFAState> transitions = new Dictionary<string,DFAState>();
+    public DFAState(HashSet<NFAState> lbl, int index){
+        this.label=lbl;
+        this.index=index;
+    }
+    public void addTransition(string sym, DFAState q){
+        if( this.transitions.ContainsKey(sym) )
+            throw new Exception("Duplicate transition");
+        this.transitions[sym] = q;
+    }
+}
+
+var dfa = new List<DFAState>();
+var toDo = new List<DFAState>();
+var StartState = new DFAState(nfa[0].closure, 0);
+dfa.add(StartState);
+toDo.add(StartState);
+//bootstrapped
+while(toDo.Count > 0)
+{
+    var q = toDo.Remove(toDo.Count - 1)
+    Dictionary<string, HashSet<NFAState>> X = new Dictionary<string, HashSet<NFAState>>();
+    foreach(NFAState n in q.label)
+    {
+        LR0Item I = n.item
+        foreach(string sym in n.transitions)
+        {
+            if(sym != "")
+            {
+                if(!X.ContainsKey(sym))
+                    X[sym] = new HashSet<NFAState>();
+                foreach(NFAState n2 in n.transitions[sym])
+                    X[sym.Add(n2)];
+            }
+        } 
+    }
+    foreach(string sym in X.Keys)
+    {
+        HashSet<NFAState> dlabel;
+        dlabel = new HashSet<NFAState>();
+        foreach(NFAState nq in X[sym])
+        {
+            dlabel.UnionWith(nq.closure);
+        }
+        DFAState dq;
+        if(dfaMap.ContainsKey(dlabel))
+            dq = dfaMap[dlabel];
+        else
+        {
+            dq = new DFAState(dlabel, dfa.Count);
+            dfaMap[dlabel] = dq;
+            toDo.Add(dq);
+        }
+        q.AddTransition(dq, sym);
+    }
+}
+
+def parse(T, dfa):  #T Tokenizer dfa List of DFANodes
+    stk = [dfa[0]]         #state stack
+    nstk = [None]     #node stack
+    while(True):
+        q = dfa[stk.copy()]
+        t = T.peek().sym
+        if q.transitions.hasKey(T):
+            #shift
+            tok = T.next()
+            n = TreeNode(tok.sym, sok)
+            stk.push(q.transitions[t])
+            nstk.push(n)
+        else:
+            #reduce
+            for I in q.label:
+                if I.dpos at end:
+                    if T in follow[I.lhs]:
+                        n = TreeNode(I.lhs, None)
+                        for i in range(len(I.rhs)):
+                            stk.pop()
+                            n.children.prepend(nstk.pop())
+                        if I.lhs == 'S':
+                            accept!
+                            root
+                            return n.children[0]
+                        q = stk.pop()
+                        q = q.transtions[I.lhs]
+                        stk.push(q)
+                        nstk.push(n)
+
