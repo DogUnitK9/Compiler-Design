@@ -117,7 +117,7 @@ return 10 + 20, the assembly language would look like:
 ```
 rax and rbx was registers or temporary storage locations since the CPU often can’t work with values in RAM, and each one is 64 bits wide. There also exists xmm0-15 for floats since these registers only work with ints.
 
-After the assembly language has been generated, it will be put into the test harness to run
+After the assembly language has been generated, it will be put into the test harness to run, and the test harness was a program provided by the instructor to be able to run our program multiple times without having to change the args constantly in the main program to check our provided tests.
 ![image](https://user-images.githubusercontent.com/59978662/236357983-cf871b5f-b2d2-4307-8e48-54bf2bd6d89f.png)
 The top left box is what output you want your source code to be, the bottom left is where you can provide the code to be run. The right boxes are used for debugged where the top right shows what assembly code was produced from the provided function and the bottom right is a console output.
-The code here is far from perfect, very wet in some areas and far from handling all types of coding aspects such as globals or locals, or complex functions. It also has not been optimized which means it is not working up to possible speeds it can achieve, but this is somethingthat I may work on later.
+The code here is far from perfect, very wet in some areas and far from handling all types of coding aspects such as globals, locals, or complex functions. It also has not been optimized which means it is not working up to possible speeds it can achieve, but this is something that I may work on later.
