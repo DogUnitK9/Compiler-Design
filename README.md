@@ -1,4 +1,4 @@
-# Compiler-Design
+# Compiler-Project
 The idea behind this is to take human readable code and be able to convert it into executable code. This involves making your own programming language and having it execute code based on what you specify. A prime example would be the Chef programming language made by David Morgan-Mar which simulates a baking recipe to output functional code.
 
 But a compilers works as a multistage process where it scans a text, puts the text into a compiler where it can generate the assembly code, then it sends the assembly code into an object file where the linker file will combine everything into one executable. Example Image of process from https://www.geeksforgeeks.org/introduction-of-compiler-design/
