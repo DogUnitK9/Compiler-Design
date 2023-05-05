@@ -120,3 +120,4 @@ rax and rbx was registers or temporary storage locations since the CPU often can
 After the assembly language has been generated, it will be put into the test harness to run
 ![image](https://user-images.githubusercontent.com/59978662/236357983-cf871b5f-b2d2-4307-8e48-54bf2bd6d89f.png)
 The top left box is what output you want your source code to be, the bottom left is where you can provide the code to be run. The right boxes are used for debugged where the top right shows what assembly code was produced from the provided function and the bottom right is a console output.
+The code here is far from perfect, very wet in some areas and far from handling all types of coding aspects such as globals or locals, or complex functions. It also has not been optimized which means it is not working up to possible speeds it can achieve, but this is somethingthat I may work on later.
